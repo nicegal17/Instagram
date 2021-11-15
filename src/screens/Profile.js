@@ -1,5 +1,5 @@
-import {useRoute} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
+import {useRoute, useNavigation} from '@react-navigation/native';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -10,13 +10,17 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {Button, ButtonGroup} from 'react-native-elements';
-import UserAvatar from '../components/UserAvatar';
 import FastImage from 'react-native-fast-image';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
 import GridViewSVG from '../assets/svg/gridview.svg';
 import ListViewSVG from '../assets/svg/listview.svg';
 import TaggedSVG from '../assets/svg/tagged.svg';
+import Back from '../assets/svg/back.svg';
+import Notification from '../assets/svg/notifications.svg';
+
+import UserAvatar from '../components/UserAvatar';
+import HeaderTitle from '../components/HeaderTitle';
 
 import {useDispatch, useSelector} from 'react-redux';
 import {userSelector} from '../stores/slices/userSlice';
@@ -32,6 +36,7 @@ const ProfileScreen = () => {
   const dispatch = useDispatch();
   const [Item, setItem] = useState({});
   const [PhotosArr, setPhotos] = useState([]);
+  const navigation = useNavigation();
 
   const User = useSelector(userSelector.user);
   const UserPhotos = useSelector(userSelector.userPhotos);
@@ -50,6 +55,28 @@ const ProfileScreen = () => {
     dispatch(fetchSelectedUser(username));
     dispatch(fetchSelectedUserPhotos(username));
   };
+
+  useLayoutEffect(() => {
+    const username = route.params?.username;
+    console.log('uiname: ', username);
+    if (username) {
+      navigation.setOptions({
+        headerTitle: <HeaderTitle username={username} />,
+        headerRight: () => (
+          <TouchableOpacity style={styles.headerButton}>
+            <Notification width={24} height={24} />
+          </TouchableOpacity>
+        ),
+        headerLeft: () => (
+          <TouchableOpacity
+            style={styles.headerButton}
+            onPress={() => navigation.goBack()}>
+            <Back width={24} height={24} />
+          </TouchableOpacity>
+        ),
+      });
+    }
+  }, [navigation, route, Item]);
 
   useEffect(() => {
     const username = route.params?.username;
@@ -286,11 +313,13 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     margin: 0,
     padding: 0,
-    // backgroundColor: 'red',
   },
   buttonContainer: {
     borderWidth: 0,
     margin: 0,
     padding: 0,
+  },
+  headerButton: {
+    margin: 12,
   },
 });
