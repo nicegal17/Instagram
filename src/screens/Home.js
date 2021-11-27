@@ -1,15 +1,12 @@
-import {useNavigation, useRoute} from '@react-navigation/native';
-import React, {useEffect, useLayoutEffect, useState} from 'react';
+import {useNavigation} from '@react-navigation/native';
+import React, {useEffect} from 'react';
 import {
-  Image,
   SafeAreaView,
   StatusBar,
   StyleSheet,
   View,
-  Text,
   FlatList,
   ScrollView,
-  TouchableOpacity,
 } from 'react-native';
 import CardItem from '../components/CardItem';
 
@@ -20,22 +17,17 @@ import {useDispatch, useSelector} from 'react-redux';
 import {fetchListPhotos} from '../stores/middleware/photos';
 import {photosSelectors} from '../stores/slices/photosSlice';
 
-import Back from '../assets/svg/back.svg';
-import Notification from '../assets/svg/notifications.svg';
-import Instagram from '../assets/svg/instagram.svg';
-
 const HomeScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const PhotosArr = useSelector(photosSelectors.photos);
-  const route = useRoute();
-  // const isLoadingPhotos = useSelector(photosSelectors.isLoadingPhotos);
 
   useEffect(() => {
     dispatch(fetchListPhotos());
   }, []);
 
   const onUserPress = item => {
+    console.log('ITEM: ', item)
     navigation.navigate('ProfileScreen', {
       username: item.username,
     });

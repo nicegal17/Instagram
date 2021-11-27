@@ -1,5 +1,6 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React from 'react';
+import LoginStack from './login';
 import HomeStack from './home';
 import SearchStack from './search';
 import BrowseStack from './browse';
@@ -16,7 +17,17 @@ const Tab = createBottomTabNavigator();
 
 const RootStack = () => {
   return (
-    <Tab.Navigator initialRouteName="Home" tabBarOptions={{showLabel: false}}>
+    // <Tab.Navigator initialRouteName="Home" tabBarOptions={{showLabel: false}}>
+    <Tab.Navigator initialRouteName="Login" tabBarOptions={{showLabel: false}}>
+      {/* <Tab.Screen
+        name="Home"
+        component={HomeStack}
+        options={{
+          tabBarIcon: () => {
+            return <HomeSVG width={24} height={24} />;
+          },
+        }}
+      /> */}
       <Tab.Screen
         name="Home"
         component={HomeStack}

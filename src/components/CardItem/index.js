@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, ActionSheetIOS} from 'react-native';
 import {ListItem} from 'react-native-elements';
 import FastImage from 'react-native-fast-image';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -20,6 +20,37 @@ const CardItem = ({
   description,
   onUserPress,
 }) => {
+  const onPress = () =>
+    ActionSheetIOS.showActionSheetWithOptions(
+      {
+        options: [
+          'Cancel',
+          'Delete',
+          'Archive',
+          'Hide like count',
+          'Turn off commenting',
+          'Edit',
+          'Copy link',
+          'Share to...',
+          'Share',
+        ],
+        destructiveButtonIndex: 1,
+        cancelButtonIndex: 0,
+        userInterfaceStyle: 'light',
+        tintColor: 'black',
+        fontSize: 14,
+      },
+      buttonIndex => {
+        if (buttonIndex === 0) {
+          // cancel action
+        } else if (buttonIndex === 1) {
+          setResult(Math.floor(Math.random() * 100) + 1);
+        } else if (buttonIndex === 0) {
+          setResult('🔮');
+        }
+      },
+    );
+
   return (
     <View>
       <ListItem bottomDivider onPress={onUserPress}>
@@ -33,6 +64,7 @@ const CardItem = ({
           name="ellipsis-horizontal"
           color="#262627"
           size={24}
+          onPress={onPress}
         />
       </ListItem>
       <View>

@@ -18,6 +18,7 @@ import ListViewSVG from '../assets/svg/listview.svg';
 import TaggedSVG from '../assets/svg/tagged.svg';
 import Back from '../assets/svg/back.svg';
 import Notification from '../assets/svg/notifications.svg';
+import Elipsis from '../assets/svg/ellipsis-horizontal.svg';
 
 import UserAvatar from '../components/UserAvatar';
 import HeaderTitle from '../components/HeaderTitle';
@@ -30,6 +31,7 @@ import {
   fetchSelectedUser,
   fetchSelectedUserPhotos,
 } from '../stores/middleware/user';
+import {fetchPhoto} from '../stores/middleware/photos';
 
 const ProfileScreen = () => {
   const route = useRoute();
@@ -56,15 +58,22 @@ const ProfileScreen = () => {
     dispatch(fetchSelectedUserPhotos(username));
   };
 
+  const onPhotoPress = item => {
+    dispatch(fetchPhoto(item.id));
+    navigation.navigate('PhotoScreen');
+  };
+
   useLayoutEffect(() => {
     const username = route.params?.username;
-    console.log('uiname: ', username);
     if (username) {
       navigation.setOptions({
         headerTitle: <HeaderTitle username={username} />,
         headerRight: () => (
           <TouchableOpacity style={styles.headerButton}>
-            <Notification width={24} height={24} />
+            <View style={styles.buttonView}>
+              <Notification width={24} height={24} />
+              <Elipsis width={24} height={24} />
+            </View>
           </TouchableOpacity>
         ),
         headerLeft: () => (
@@ -101,14 +110,16 @@ const ProfileScreen = () => {
 
   const renderItem = ({item}) => {
     return (
-      <FastImage
-        source={{
-          uri: item.urls.regular,
-          priority: FastImage.priority.normal,
-        }}
-        style={styles.mainImage}
-        resizeMode={FastImage.resizeMode.cover}
-      />
+      <TouchableOpacity onPress={() => onPhotoPress(item)}>
+        <FastImage
+          source={{
+            uri: item.urls.regular,
+            priority: FastImage.priority.normal,
+          }}
+          style={styles.mainImage}
+          resizeMode={FastImage.resizeMode.cover}
+        />
+      </TouchableOpacity>
     );
   };
 
@@ -321,5 +332,9 @@ const styles = StyleSheet.create({
   },
   headerButton: {
     margin: 12,
+  },
+  buttonView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });

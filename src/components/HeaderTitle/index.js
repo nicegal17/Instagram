@@ -1,15 +1,15 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 
 import Instagram from '../../assets/svg/instagram.svg';
 
 const HeaderTitle = ({username}) => {
-  console.log('uname: ', username);
+  console.log('UNAME: ', username);
   if (username) {
-    console.log('dsadasd');
     return (
       <View>
-        <Text>{username}</Text>
+        <Text style={styles.username}>{username}</Text>
+        <Text>Posts</Text>
       </View>
     );
   } else {
@@ -18,3 +18,10 @@ const HeaderTitle = ({username}) => {
 };
 
 export default HeaderTitle;
+
+const styles = StyleSheet.create({
+  username: {
+    fontWeight: '600',
+    fontSize: 13,
+  },
+});

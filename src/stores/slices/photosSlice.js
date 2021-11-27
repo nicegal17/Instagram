@@ -1,7 +1,7 @@
 import {createSelector, createSlice} from '@reduxjs/toolkit';
 
 import {MAX_PER_PAGE} from '../../constants';
-import {fetchListPhotos} from '../middleware/photos';
+import {fetchListPhotos, fetchPhoto} from '../middleware/photos';
 
 const initialState = {
   isLoadingPhoto: false,
@@ -27,6 +27,18 @@ const {reducer} = createSlice({
     });
     builder.addCase(fetchListPhotos.rejected, (state, action) => {
       state.isLoadingPhotos = false;
+      state.error = action.error;
+    });
+
+    builder.addCase(fetchPhoto.pending, state => {
+      state.isLoadingPhoto = true;
+    });
+    builder.addCase(fetchPhoto.fulfilled, (state, {payload}) => {
+      state.isLoadingPhoto = false;
+      state.photo = payload;
+    });
+    builder.addCase(fetchPhoto.rejected, (state, action) => {
+      state.isLoadingPhoto = false;
       state.error = action.error;
     });
   },

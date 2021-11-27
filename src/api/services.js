@@ -10,6 +10,10 @@ const AppServices = {
   async fetchUserPhotos(username) {
     return await API.get(`users/${username}/photos`);
   },
+  async fetchPhoto(id) {
+    console.log('ID: ', id)
+    return await API.get(`photos/${id}`);
+  },
 };
 
 export default AppServices;

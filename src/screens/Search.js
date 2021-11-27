@@ -1,59 +1,55 @@
 import React, {useEffect, useState} from 'react';
 import {
   View,
-  Text,
   SafeAreaView,
   StyleSheet,
   StatusBar,
   FlatList,
 } from 'react-native';
 import {Input} from 'react-native-elements';
-
-import {YOUR_ACCESS_KEY} from '../constants';
-
-import axios from 'axios';
 import FastImage from 'react-native-fast-image';
+import {useNavigation} from '@react-navigation/native';
+
+import {useDispatch, useSelector} from 'react-redux';
+
+import {fetchListPhotos} from '../stores/middleware/photos';
+import {photosSelectors} from '../stores/slices/photosSlice';
+
+import {fetchPhoto} from '../stores/middleware/photos';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const SearchScreen = () => {
+  const dispatch = useDispatch();
   const [PhotosArr, setPhotosArr] = useState([]);
+  const AllPhotos = useSelector(photosSelectors.photos);
+  const navigation = useNavigation();
 
-  const loadPhotos = searchParams => {
-    axios
-      .get(
-        `https://api.unsplash.com/search/photos?per_page=50&query=${searchParams}`,
-        {
-          headers: {
-            Authorization: `Client-ID ${YOUR_ACCESS_KEY}`,
-          },
-        },
-      )
-      .then(function (response) {
-        // handle success
-        console.log('Photos: ', response.data.results);
-        setPhotosArr(response.data.results);
-      })
-      .catch(function (error) {
-        // handle error
-        console.log('error.message: ', error.message);
-      });
+  const loadPhotos = async () => {
+    dispatch(fetchListPhotos());
+  };
+
+  const onPhotoPress = item => {
+    dispatch(fetchPhoto(item.id));
+    navigation.navigate('PhotoScreen');
   };
 
   const renderItem = ({item}) => {
-    console.log('renderItem: ', item);
     return (
-      <FastImage
-        source={{
-          uri: item.urls.regular,
-          priority: FastImage.priority.normal,
-        }}
-        style={styles.mainImage}
-        resizeMode={FastImage.resizeMode.cover}
-      />
+      <TouchableOpacity onPress={() => onPhotoPress(item)}>
+        <FastImage
+          source={{
+            uri: item.urls.regular,
+            priority: FastImage.priority.normal,
+          }}
+          style={styles.mainImage}
+          resizeMode={FastImage.resizeMode.cover}
+        />
+      </TouchableOpacity>
     );
   };
 
   useEffect(() => {
-    loadPhotos();
+    setPhotosArr(AllPhotos);
   }, []);
 
   return (
