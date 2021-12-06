@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   SafeAreaView,
@@ -9,10 +9,12 @@ import {
 import {Input} from 'react-native-elements';
 import FastImage from 'react-native-fast-image';
 import {useNavigation} from '@react-navigation/native';
+import debounce from 'lodash/debounce';
+import isEmpty from 'lodash/isEmpty';
 
 import {useDispatch, useSelector} from 'react-redux';
 
-import {fetchListPhotos} from '../stores/middleware/photos';
+import {fetchSearchPhotos} from '../stores/middleware/photos';
 import {photosSelectors} from '../stores/slices/photosSlice';
 
 import {fetchPhoto} from '../stores/middleware/photos';
@@ -21,12 +23,10 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 const SearchScreen = () => {
   const dispatch = useDispatch();
   const [PhotosArr, setPhotosArr] = useState([]);
+  const [search, setSearch] = useState('');
   const AllPhotos = useSelector(photosSelectors.photos);
+  const SearchPhotos = useSelector(photosSelectors.searchedPhotos);
   const navigation = useNavigation();
-
-  const loadPhotos = async () => {
-    dispatch(fetchListPhotos());
-  };
 
   const onPhotoPress = item => {
     dispatch(fetchPhoto(item.id));
@@ -49,8 +49,17 @@ const SearchScreen = () => {
   };
 
   useEffect(() => {
-    setPhotosArr(AllPhotos);
-  }, []);
+    if (!isEmpty(search)) {
+      setPhotosArr(SearchPhotos);
+    } else {
+      setPhotosArr(AllPhotos);
+    }
+  }, [SearchPhotos, AllPhotos, search]);
+
+  const handleSearch = debounce(text => {
+    setSearch(text);
+    dispatch(fetchSearchPhotos(text));
+  }, 600);
 
   return (
     <SafeAreaView style={styles.backgroundStyle}>
@@ -67,7 +76,7 @@ const SearchScreen = () => {
             color: '#B7B7B7',
             size: 25,
           }}
-          onChangeText={value => loadPhotos(value)}
+          onChangeText={value => handleSearch(value)}
         />
       </View>
       <FlatList

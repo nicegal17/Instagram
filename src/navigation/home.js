@@ -18,7 +18,7 @@ const Stack = createStackNavigator();
 function HomeStack() {
   return (
     <Stack.Navigator
-      initialRouteName="LoginScreen"
+      initialRouteName="HomeScreen"
       screenOptions={{
         headerTitle: props => <Instagram height={28} {...props} />,
         headerRight: () => (
@@ -32,7 +32,6 @@ function HomeStack() {
           </TouchableOpacity>
         ),
       }}>
-      <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       <Stack.Screen name="SearchScreen" component={SearchScreen} />

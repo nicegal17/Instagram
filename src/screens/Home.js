@@ -1,5 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useLayoutEffect} from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -16,6 +16,7 @@ import TopicsAvatar from '../components/TopicsAvatar';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchListPhotos} from '../stores/middleware/photos';
 import {photosSelectors} from '../stores/slices/photosSlice';
+import {likePhoto, unLikePhoto} from '../stores/middleware/user';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -27,10 +28,17 @@ const HomeScreen = () => {
   }, []);
 
   const onUserPress = item => {
-    console.log('ITEM: ', item)
     navigation.navigate('ProfileScreen', {
       username: item.username,
     });
+  };
+
+  const onLikePress = async (liked, id) => {
+    if (liked) {
+      await dispatch(unLikePhoto(id));
+    } else {
+      await dispatch(likePhoto(id));
+    }
   };
 
   const renderItem = ({item}) => {
@@ -41,8 +49,10 @@ const HomeScreen = () => {
         imageurl={item.urls.regular}
         userAvatar={item.user.profile_image.medium}
         likes={item.likes}
+        liked={item.liked_by_user}
         description={item.description}
         onUserPress={() => onUserPress(item.user)}
+        onLikePress={() => onLikePress(item.liked_by_user, item.id)}
       />
     );
   };

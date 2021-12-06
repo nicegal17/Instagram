@@ -7,6 +7,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import UserAvatar from '../UserAvatar';
 
 import LikesSVG from '../../assets/svg/likes.svg';
+import LikedSVG from '../../assets/svg/liked.svg';
 import CommentSVG from '../../assets/svg/comment.svg';
 import ShareSVG from '../../assets/svg/share.svg';
 import BookmarkSVG from '../../assets/svg/bookmark.svg';
@@ -17,8 +18,10 @@ const CardItem = ({
   imageurl,
   userAvatar,
   likes,
+  liked,
   description,
   onUserPress,
+  onLikePress,
 }) => {
   const onPress = () =>
     ActionSheetIOS.showActionSheetWithOptions(
@@ -79,8 +82,12 @@ const CardItem = ({
       </View>
       <View style={styles.sharerContainer}>
         <View style={styles.sharerGroup}>
-          <TouchableOpacity style={styles.sharerIcons}>
-            <LikesSVG width={24} height={24} />
+          <TouchableOpacity style={styles.sharerIcons} onPress={onLikePress}>
+            {liked ? (
+              <LikedSVG width={28} height={28} />
+            ) : (
+              <LikesSVG width={24} height={24} />
+            )}
           </TouchableOpacity>
           <TouchableOpacity style={styles.sharerIcons}>
             <CommentSVG width={24} height={24} />
@@ -94,7 +101,7 @@ const CardItem = ({
         </TouchableOpacity>
       </View>
       <View style={styles.texts}>
-        <Text style={styles.likes}>{likes} Likes</Text>
+        {likes ? <Text style={styles.likes}>{likes} Likes</Text> : null}
         <View style={styles.userText}>
           <Text style={styles.userName}>
             {userName}{' '}

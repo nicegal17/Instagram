@@ -2,32 +2,36 @@ import {createSelector, createSlice} from '@reduxjs/toolkit';
 import {
   fetchSelectedUser,
   fetchSelectedUserPhotos,
-  fetchUserInfo,
+  fetchMyProfile,
   fetchUserPhotos,
+  fetchLikedPhotos,
 } from '../middleware/user';
 
 const initialState = {
   isLoadingUser: false,
   isLoadingUserPhotos: false,
+  isLoadingLikedPhotos: false,
   user: null,
   userPhotos: [],
   selectedUser: null,
   selectedUserPhotos: [],
+  likedPhotos: [],
 };
 
 const {reducer} = createSlice({
   name: 'user',
   initialState,
+  reducers: {},
   extraReducers(builder) {
-    // Get User Info
-    builder.addCase(fetchUserInfo.pending, state => {
+    // Get my profile
+    builder.addCase(fetchMyProfile.pending, state => {
       state.isLoadingUser = true;
     });
-    builder.addCase(fetchUserInfo.fulfilled, (state, {payload}) => {
+    builder.addCase(fetchMyProfile.fulfilled, (state, {payload}) => {
       state.isLoadingUser = false;
       state.user = payload;
     });
-    builder.addCase(fetchUserInfo.rejected, (state, action) => {
+    builder.addCase(fetchMyProfile.rejected, (state, action) => {
       state.isLoadingUser = false;
       state.error = action.error;
     });
@@ -70,6 +74,19 @@ const {reducer} = createSlice({
       state.isLoadingUserPhotos = false;
       state.error = action.error;
     });
+
+    // Get Liked Photos
+    builder.addCase(fetchLikedPhotos.pending, state => {
+      state.isLoadingLikedPhotos = true;
+    });
+    builder.addCase(fetchLikedPhotos.fulfilled, (state, {payload}) => {
+      state.isLoadingLikedPhotos = false;
+      state.likedPhotos = payload;
+    });
+    builder.addCase(fetchLikedPhotos.rejected, (state, action) => {
+      state.isLoadingLikedPhotos = false;
+      state.error = action.error;
+    });
   },
 });
 
@@ -83,10 +100,15 @@ export const userSelector = {
     selectRoot,
     state => state.selectedUserPhotos,
   ),
+  likedPhotos: createSelector(selectRoot, state => state.likedPhotos),
   isLoadingUser: createSelector(selectRoot, state => state.isLoadingUser),
   isLoadingUserPhotos: createSelector(
     selectRoot,
     state => state.isLoadingUserPhotos,
+  ),
+  isLoadingLikedPhotos: createSelector(
+    selectRoot,
+    state => state.isLoadingLikedPhotos,
   ),
 };
 

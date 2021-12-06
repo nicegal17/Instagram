@@ -1,10 +1,11 @@
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import {YOUR_ACCESS_KEY} from '../constants';
+import {UNSPLASH_AUTH, YOUR_ACCESS_KEY} from '../constants';
 
 const baseURL = 'https://api.unsplash.com/';
 
-const headers = {
+let headers = {
   Accept: 'application/json',
   'Content-Type': 'application/json',
   Authorization: `Client-ID ${YOUR_ACCESS_KEY}`,
@@ -31,6 +32,14 @@ const API = axios.create({
 
 API.interceptors.request.use(
   async config => {
+    const value = await AsyncStorage.getItem(UNSPLASH_AUTH);
+    if (value) {
+      const auth = JSON.parse(value);
+      headers = {
+        ...headers,
+        Authorization: `Bearer ${auth.accessToken}`,
+      };
+    }
     config.headers = headers;
     return config;
   },
